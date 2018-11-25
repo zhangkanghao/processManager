@@ -7,17 +7,17 @@ public class Main {
     /**
      * 全局变量
      */
-    public static int res1=50;
+    public static int res1=1;
 
-    public static int res2=100;
+    public static int res2=1;
 
     public static Scheduler scheduler;
 
     public static Semaphore[] semaphores=new Semaphore[2];
 
-    public int register;
+    public static int register;
 
-    public char addr;
+    public static char addr;
 
     //初始化函数
     private static void initial(){

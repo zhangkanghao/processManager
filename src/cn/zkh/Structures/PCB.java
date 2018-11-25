@@ -17,10 +17,10 @@ public class PCB {
 
     //等待链指针：在同一信号量是wait的下一个进程id
     private int nextwp;
-    
+
     private int epoch;
 
-    private int addr;
+    private char addr;
 
     private IProcess process;
 
@@ -64,11 +64,11 @@ public class PCB {
         this.epoch = epoch;
     }
 
-    public int getAddr() {
+    public char getAddr() {
         return addr;
     }
 
-    public void setAddr(int addr) {
+    public void setAddr(char addr) {
         this.addr = addr;
     }
 
