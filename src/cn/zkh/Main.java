@@ -1,7 +1,5 @@
 package cn.zkh;
 
-import cn.zkh.Structures.PCB;
-import cn.zkh.Structures.Saver;
 import cn.zkh.Structures.Semaphore;
 
 public class Main {
@@ -17,12 +15,9 @@ public class Main {
 
     public static Semaphore[] semaphores=new Semaphore[2];
 
-    public static Saver[] savers=new Saver[3];
+    public int register;
 
     public char addr;
-
-
-
 
     //初始化函数
     private static void initial(){
@@ -34,6 +29,7 @@ public class Main {
             semaphores[i]=new Semaphore();
         }
     }
+
 
     public static void main(String[] args) {
         int processChoosed;
@@ -60,4 +56,6 @@ public class Main {
         System.out.println("resource1="+res1+"\t resource2="+res2);
         System.out.println("\tprocess management finish\t");
     }
+
+
 }

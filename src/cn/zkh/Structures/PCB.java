@@ -17,6 +17,10 @@ public class PCB {
 
     //等待链指针：在同一信号量是wait的下一个进程id
     private int nextwp;
+    
+    private int epoch;
+
+    private int addr;
 
     private IProcess process;
 
@@ -50,6 +54,22 @@ public class PCB {
 
     public void setNextwp(int nextwp) {
         this.nextwp = nextwp;
+    }
+
+    public int getEpoch() {
+        return epoch;
+    }
+
+    public void setEpoch(int epoch) {
+        this.epoch = epoch;
+    }
+
+    public int getAddr() {
+        return addr;
+    }
+
+    public void setAddr(int addr) {
+        this.addr = addr;
     }
 
     public PCB() {
