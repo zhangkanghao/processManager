@@ -38,8 +38,6 @@ public class Scheduler {
         waitingQueue.add(pcb);
     }
 
-
-
     /**
      * find next available process in waiting queue
      * @return next available process
@@ -48,6 +46,9 @@ public class Scheduler {
         return waitingQueue.peek();
     }
 
+    /**
+     * 调度
+     */
     void schedule(){
         PCB next=nextProcess();
         //if there is no available process,return
@@ -69,8 +70,5 @@ public class Scheduler {
             callback.upCpu(running.getId());
         }
     }
-
-
-
 
 }
