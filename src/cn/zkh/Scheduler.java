@@ -48,12 +48,12 @@ public class Scheduler {
         return waitingQueue.peek();
     }
 
-    void schedule(){
+    int schedule(){
         PCB next=nextProcess();
         //if there is no available process,return
         if(next==null&&running==null){
             callback.finish();
-            return;
+            return -1;
         }
         //having process in waiting queue
         if(next!=null){
@@ -68,6 +68,7 @@ public class Scheduler {
             running=next;
             callback.upCpu(running.getId());
         }
+        return running.getId();
     }
 
 
