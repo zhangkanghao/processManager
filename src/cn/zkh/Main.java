@@ -4,6 +4,7 @@ import cn.zkh.Structures.PCB;
 import cn.zkh.Structures.Saver;
 import cn.zkh.Structures.Semaphore;
 
+import javax.naming.InitialContext;
 import java.util.Arrays;
 
 public class Main {
@@ -19,7 +20,7 @@ public class Main {
 
 
     //初始化函数
-    private void initial(){
+    private static void initial(){
         //初始化进程
         PCB[] process=new PCB[3];
         Saver[] processSaver=new Saver[3];
@@ -34,7 +35,16 @@ public class Main {
     }
 
 
+
+
+
+
     public static void main(String[] args) {
-        
+        int k;
+        /**
+         * 初始化
+         */
+        initial();
+
     }
 }
