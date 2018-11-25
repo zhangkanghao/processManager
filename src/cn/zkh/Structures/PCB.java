@@ -1,5 +1,6 @@
 package cn.zkh.Structures;
 
+import cn.zkh.IProcess;
 import cn.zkh.Status;
 
 /**
@@ -16,6 +17,16 @@ public class PCB {
 
     //等待链指针：在同一信号量是wait的下一个进程id
     private int nextwp;
+
+    private IProcess process;
+
+    public IProcess getProcess() {
+        return process;
+    }
+
+    public void setProcess(IProcess process) {
+        this.process = process;
+    }
 
     public int getId() {
         return id;
@@ -39,6 +50,10 @@ public class PCB {
 
     public void setNextwp(int nextwp) {
         this.nextwp = nextwp;
+    }
+
+    public PCB() {
+
     }
 
     public PCB(int id) {
