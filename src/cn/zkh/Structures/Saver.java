@@ -18,8 +18,11 @@ public class Saver {
     //...
 
 
+
     public Saver(int id) {
         this.id = id;
+        cutAddr="init String";
+        regContent="init String";
     }
 
     public int getId() {

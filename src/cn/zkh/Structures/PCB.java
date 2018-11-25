@@ -14,9 +14,6 @@ public class PCB {
     //进程状态
     private Status statu;
 
-    //进程优先级
-    private int priorty;
-
     //等待链指针：在同一信号量是wait的下一个进程id
     private int nextwp;
 
@@ -36,14 +33,6 @@ public class PCB {
         this.statu = statu;
     }
 
-    public int getPriorty() {
-        return priorty;
-    }
-
-    public void setPriorty(int priorty) {
-        this.priorty = priorty;
-    }
-
     public int getNextwp() {
         return nextwp;
     }
@@ -52,10 +41,9 @@ public class PCB {
         this.nextwp = nextwp;
     }
 
-    public PCB(int id, Status statu, int priorty, int nextwp) {
+    public PCB(int id) {
         this.id = id;
-        this.statu = statu;
-        this.priorty = priorty;
-        this.nextwp = nextwp;
+        statu=Status.READY;
+        nextwp=-1;
     }
 }
