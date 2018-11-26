@@ -1,14 +1,14 @@
 package cn.zkh;
 
 import cn.zkh.scheduler.CPU;
-import cn.zkh.scheduler.IProcess;
+import cn.zkh.scheduler.Process;
 
 import static cn.zkh.Main.addr;
 
 /**
  * Created by likole on 11/26/18.
  */
-public class Process1 implements IProcess {
+public class Process1 extends Process {
 
     private boolean stop;
     @Override
@@ -54,5 +54,6 @@ public class Process1 implements IProcess {
             }
             CPU.i++;
         }
+        finish();
     }
 }

@@ -24,7 +24,7 @@ public class PCB {
     /**
      * 程序
      */
-    private IProcess process;
+    private Process process;
 
     public int getPid() {
         return pid;
@@ -50,11 +50,11 @@ public class PCB {
         this.register = register;
     }
 
-    public IProcess getProcess() {
+    public Process getProcess() {
         return process;
     }
 
-    public void setProcess(IProcess process) {
+    public void setProcess(Process process) {
         this.process = process;
     }
 }

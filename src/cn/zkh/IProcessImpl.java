@@ -5,8 +5,6 @@ package cn.zkh;
  * @date 18-11-25 下午8:42
  */
 
-import cn.zkh.scheduler.IProcess;
-
 public class IProcessImpl  {
 
     public void process1(int epoch, char addr) {

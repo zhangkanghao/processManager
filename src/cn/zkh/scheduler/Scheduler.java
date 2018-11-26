@@ -32,10 +32,11 @@ public class Scheduler {
      * add a process
      * @param process 进程
      */
-    public void addProcess(IProcess process){
+    public void addProcess(Process process){
         PCB pcb =new PCB();
         pcb.setPid(++processCount);
         pcb.setRegister(new Register());
+        process.setScheduler(this);
         pcb.setProcess(process);
         pcb.setStatus(Status.READY);
         waitingQueue.add(pcb);
@@ -63,7 +64,7 @@ public class Scheduler {
 
     private void upCpu(PCB pcb){
         //remove from waiting queue
-        waitingQueue.remove();
+        waitingQueue.poll();
         pcb.setStatus(Status.EXCUTION);
         running=pcb;
         //恢复运行线程
@@ -78,6 +79,7 @@ public class Scheduler {
         PCB next=nextProcess();
         //if there is no available process,return
         if(next==null&&running==null){
+            System.out.println("没有进程可以运行了");
             if(callback!=null){
                 callback.finish();
             }
@@ -101,14 +103,23 @@ public class Scheduler {
         }
     }
 
+    /**
+     * 结束运行当期进程
+     */
+    public void finish(){
+        running=null;
+    }
+
     public void start(){
         new Thread(() -> {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while (true){
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                schedule();
             }
-            schedule();
         }).start();
     }
 
