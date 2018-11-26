@@ -1,50 +1,61 @@
 package cn.zkh;
 
-import cn.zkh.Structures.PCB;
-import cn.zkh.Structures.Saver;
 import cn.zkh.Structures.Semaphore;
-
-import javax.naming.InitialContext;
-import java.util.Arrays;
 
 public class Main {
 
     /**
      * 全局变量
      */
-    private static int excuting=-1;
+    public static int res1=1;
 
-    private static int res1=50;
+    public static int res2=1;
 
-    private static int res2=100;
+    public static Scheduler scheduler;
 
+    public static Semaphore[] semaphores=new Semaphore[2];
+
+    public static int register;
+
+    public static char addr;
 
     //初始化函数
     private static void initial(){
-        //初始化进程
-        PCB[] process=new PCB[3];
-        Saver[] processSaver=new Saver[3];
-        for (int i=0;i<3;i++){
-            process[i]=new PCB(i);
-            processSaver[i]=new Saver(i);
-        }
+        //调度程序
+        scheduler=new Scheduler();
 
         //设置互斥信号量
-        Semaphore semaphore1=new Semaphore();
-        Semaphore semaphore2=new Semaphore();
+        for(int i=0;i<2;i++){
+            semaphores[i]=new Semaphore();
+        }
     }
 
 
-
-
-
-
     public static void main(String[] args) {
-        int k;
+        int processChoosed;
+
         /**
          * 初始化
          */
         initial();
-
+        System.out.println("\tprocess management starting\t");
+        System.out.println("resource1="+res1+"\t resource2="+res2);
+        System.out.println("process1,2,3 are all in ready.");
+        while(true){
+            if((processChoosed=scheduler.schedule())!=-1){
+                switch (processChoosed){
+                    case 0:break;
+                    case 1:break;
+                    case 2:break;
+                    default:
+                        System.out.println("something errors happen in schdule()");
+                        break;
+                }
+            }else break;
+        }
+        System.out.println("resource1="+res1+"\t resource2="+res2);
+        System.out.println("\tprocess management finish\t");
     }
+
+
 }
