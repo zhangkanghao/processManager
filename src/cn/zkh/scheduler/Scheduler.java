@@ -1,6 +1,9 @@
 package cn.zkh.scheduler;
 
+import java.sql.Time;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 
@@ -20,9 +23,25 @@ public class Scheduler {
      */
     private ISchedulerActionListener callback;
 
+    /**
+     * 充当时间中断
+     */
+    private Timer timer=new Timer();
+
+    /**
+     * 定时器执行的任务
+     */
+    private TimerTask timerTask=new TimerTask() {
+        @Override
+        public void run() {
+            schedule();
+        }
+    };
+
     private Queue<PCB> waitingQueue=new ConcurrentLinkedDeque<>();
-    Queue<PCB> blockingQueue=new ConcurrentLinkedDeque<>();
+    private Queue<PCB> blockingQueue=new ConcurrentLinkedDeque<>();
     private PCB running;
+    private Queue<PCB> finishedQueue=new ConcurrentLinkedDeque<>();
 
     void setActionListener(ISchedulerActionListener actionListener){
         callback=actionListener;
@@ -53,6 +72,8 @@ public class Scheduler {
     private void downCpu(PCB pcb){
         //换下cpu
         pcb.getProcess().stop();
+        //等待程序换下cpu
+        while (!pcb.getProcess().isStopped());
         //add to waiting queue;
         running.setStatus(Status.READY);
         waitingQueue.add(running);
@@ -72,6 +93,7 @@ public class Scheduler {
         CPU.i=register.getAx();
         CPU.address=register.getPc();
         //运行
+        pcb.getProcess().preRun();
         new Thread(() -> pcb.getProcess().run()).start();
     }
 
@@ -107,20 +129,26 @@ public class Scheduler {
      * 结束运行当期进程
      */
     public void finish(){
+        System.out.println("进程"+running.getPid()+"已经运行完毕,加入结束队列,并进行调度");
+        //移至结束队列
+        running.setStatus(Status.FINISH);
+        finishedQueue.add(running);
         running=null;
+        //重新调度
+        try {
+            timer.cancel();
+        }catch (Exception e){
+            //
+        }
+        schedule();
+        try {
+            timer.scheduleAtFixedRate(timerTask, 0, 2);
+        }catch (Exception e){
+            //
+        }
     }
 
-    public void start(){
-        new Thread(() -> {
-            while (true){
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                schedule();
-            }
-        }).start();
+    public void start() {
+        timer.scheduleAtFixedRate(timerTask, 0, 1);
     }
-
 }
