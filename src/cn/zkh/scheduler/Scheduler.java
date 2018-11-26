@@ -154,6 +154,22 @@ public class Scheduler {
         }, DELAY_TIME);
     }
 
+    public void block(){
+        System.out.println("进程"+running.getPid()+"被阻塞，进入阻塞队列");
+        running.setStatus(Status.WAITING);
+        blockingQueue.add(running);
+        running=null;
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                schedule();
+            }
+        }, DELAY_TIME);
+    }
+
+    public void wakeup(){
+    }
+
     public void start() {
         schedule();
     }
