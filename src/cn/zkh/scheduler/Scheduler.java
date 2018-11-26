@@ -159,15 +159,13 @@ public class Scheduler {
         running.setStatus(Status.WAITING);
         blockingQueue.add(running);
         running=null;
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                schedule();
-            }
-        }, DELAY_TIME);
+        running=waitingQueue.poll();
     }
 
     public void wakeup(){
+        System.out.println("进程"+blockingQueue.peek().getPid()+"被唤醒");
+        waitingQueue.add(blockingQueue.peek());
+        blockingQueue.poll();
     }
 
     public void start() {
