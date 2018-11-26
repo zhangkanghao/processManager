@@ -20,7 +20,7 @@ public abstract class Process {
     /**
      * 已经收到停止信号
      */
-    protected boolean stopped;
+    private boolean stopped;
 
 
     void setScheduler(Scheduler scheduler) {
@@ -39,6 +39,13 @@ public abstract class Process {
      */
     protected void stop(){
         stop=true;
+    }
+
+    /**
+     * 结束运行
+     */
+    protected void stopped(){
+        stopped=true;
     }
 
     /**
