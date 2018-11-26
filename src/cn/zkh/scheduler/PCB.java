@@ -1,12 +1,10 @@
 package cn.zkh.scheduler;
 
-import cn.zkh.IProcess;
-import cn.zkh.Status;
-
 /**
+ * 进程控制块
  * @author likole
  */
-public class ProcessControlBlock {
+public class PCB {
 
     /**
      * 进程号
@@ -18,17 +16,15 @@ public class ProcessControlBlock {
      */
     private Status status;
 
+    /**
+     * 处理机现场
+     */
     private Register register;
 
+    /**
+     * 程序
+     */
     private IProcess process;
-
-    public IProcess getProcess() {
-        return process;
-    }
-
-    public void setProcess(IProcess process) {
-        this.process = process;
-    }
 
     public int getPid() {
         return pid;
@@ -46,37 +42,19 @@ public class ProcessControlBlock {
         this.status = status;
     }
 
-    public int getNextwp() {
-        return nextwp;
+    public Register getRegister() {
+        return register;
     }
 
-    public void setNextwp(int nextwp) {
-        this.nextwp = nextwp;
+    public void setRegister(Register register) {
+        this.register = register;
     }
 
-    public int getEpoch() {
-        return epoch;
+    public IProcess getProcess() {
+        return process;
     }
 
-    public void setEpoch(int epoch) {
-        this.epoch = epoch;
-    }
-
-    public char getAddr() {
-        return addr;
-    }
-
-    public void setAddr(char addr) {
-        this.addr = addr;
-    }
-
-    public ProcessControlBlock() {
-
-    }
-
-    public ProcessControlBlock(int id) {
-        this.pid = id;
-        status =Status.READY;
-        nextwp=-1;
+    public void setProcess(IProcess process) {
+        this.process = process;
     }
 }

@@ -1,6 +1,7 @@
 package cn.zkh;
 
-import cn.zkh.Structures.Semaphore;
+import cn.zkh.scheduler.Semaphore;
+import cn.zkh.scheduler.Scheduler;
 
 public class Main {
 
@@ -38,23 +39,26 @@ public class Main {
          * 初始化
          */
         initial();
-        System.out.println("\tprocess management starting\t");
-        System.out.println("resource1="+res1+"\t resource2="+res2);
-        System.out.println("process1,2,3 are all in ready.");
-        while(true){
-            if((processChoosed=scheduler.schedule())!=-1){
-                switch (processChoosed){
-                    case 0:break;
-                    case 1:break;
-                    case 2:break;
-                    default:
-                        System.out.println("something errors happen in schdule()");
-                        break;
-                }
-            }else break;
-        }
-        System.out.println("resource1="+res1+"\t resource2="+res2);
-        System.out.println("\tprocess management finish\t");
+//        System.out.println("\tprocess management starting\t");
+//        System.out.println("resource1="+res1+"\t resource2="+res2);
+//        System.out.println("process1,2,3 are all in ready.");
+//        while(true){
+//            if((processChoosed=scheduler.schedule())!=-1){
+//                switch (processChoosed){
+//                    case 0:break;
+//                    case 1:break;
+//                    case 2:break;
+//                    default:
+//                        System.out.println("something errors happen in schdule()");
+//                        break;
+//                }
+//            }else break;
+//        }
+//        System.out.println("resource1="+res1+"\t resource2="+res2);
+//        System.out.println("\tprocess management finish\t");
+        scheduler.addProcess(new Process1());
+        scheduler.addProcess(new Process1());
+        scheduler.start();
     }
 
 

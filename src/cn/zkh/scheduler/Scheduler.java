@@ -1,13 +1,11 @@
-package cn.zkh;
-
-import cn.zkh.Structures.PCB;
-import sun.java2d.cmm.PCMM;
+package cn.zkh.scheduler;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 
 /**
+ * 调度程序
  * @author likole
  */
 public class Scheduler {
@@ -22,23 +20,26 @@ public class Scheduler {
      */
     private ISchedulerActionListener callback;
 
+    private Queue<PCB> waitingQueue=new ConcurrentLinkedDeque<>();
+    Queue<PCB> blockingQueue=new ConcurrentLinkedDeque<>();
+    private PCB running;
+
     void setActionListener(ISchedulerActionListener actionListener){
         callback=actionListener;
     }
 
-    private Queue<PCB> waitingQueue=new ConcurrentLinkedDeque<>();
-    Queue<PCB> blockingQueue=new ConcurrentLinkedDeque<>();
-    PCB running;
-
-    void start(IProcess process){
-        PCB pcb=new PCB();
-        pcb.setId(++processCount);
+    /**
+     * add a process
+     * @param process 进程
+     */
+    public void addProcess(IProcess process){
+        PCB pcb =new PCB();
+        pcb.setPid(++processCount);
+        pcb.setRegister(new Register());
         pcb.setProcess(process);
-        pcb.setStatu(Status.READY);
+        pcb.setStatus(Status.READY);
         waitingQueue.add(pcb);
     }
-
-
 
     /**
      * find next available process in waiting queue
@@ -48,30 +49,67 @@ public class Scheduler {
         return waitingQueue.peek();
     }
 
-    void schedule(){
+    private void downCpu(PCB pcb){
+        //换下cpu
+        pcb.getProcess().stop();
+        //add to waiting queue;
+        running.setStatus(Status.READY);
+        waitingQueue.add(running);
+        //保存运行现场
+        Register register=pcb.getRegister();
+        register.setAx(CPU.i);
+        register.setPc(CPU.address);
+    }
+
+    private void upCpu(PCB pcb){
+        //remove from waiting queue
+        waitingQueue.remove();
+        pcb.setStatus(Status.EXCUTION);
+        running=pcb;
+        //恢复运行线程
+        Register register=pcb.getRegister();
+        CPU.i=register.getAx();
+        CPU.address=register.getPc();
+        //运行
+        new Thread(() -> pcb.getProcess().run()).start();
+    }
+
+    private void schedule(){
         PCB next=nextProcess();
         //if there is no available process,return
         if(next==null&&running==null){
-            callback.finish();
-            return -1;
+            if(callback!=null){
+                callback.finish();
+            }
         }
         //having process in waiting queue
         if(next!=null){
             //put running process into waiting queue
             if(running!=null){
-                callback.downCpu(running.getId());
-                running.setStatu(Status.READY);
-                waitingQueue.add(running);
+                System.out.println("目前有进程运行");
+                if(callback!=null){
+                    callback.downCpu(running.getPid());
+                }
+                downCpu(running);
+                System.out.println("已将进程"+running.getPid()+"换下cpu");
             }
-            waitingQueue.remove();
-            next.setStatu(Status.EXCUTION);
-            running=next;
-            callback.upCpu(running.getId());
+            if(callback!=null){
+                callback.upCpu(next.getPid());
+            }
+            upCpu(next);
+            System.out.println("已将进程"+next.getPid()+"换上cpu");
         }
-        return running.getId();
     }
 
-
-
+    public void start(){
+        new Thread(() -> {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            schedule();
+        }).start();
+    }
 
 }

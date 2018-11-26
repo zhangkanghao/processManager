@@ -1,14 +1,19 @@
-package cn.zkh;
+package cn.zkh.scheduler;
 
 /**
- * Created by likole on 11/25/18.
+ * 一个进程
+ * @author likole
+ * @date 11/25/18
  */
 public interface IProcess {
 
-    void process1(int epoch,char addr);
+    /**
+     * 停止运行
+     */
+    void stop();
 
-    void process2(int epoch,char addr);
-
-    void process3(int epoch,char addr);
-
+    /**
+     * 程序运行代码
+     */
+    void run();
 }
