@@ -20,9 +20,12 @@ public abstract class Process {
     /**
      * 已经收到停止信号
      */
-    private boolean stopped;
+    boolean stopped;
 
 
+    /**
+     * 由调度程序设置
+     */
     void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
@@ -37,23 +40,19 @@ public abstract class Process {
     /**
      * 停止运行
      */
-    protected void stop(){
+    void stop(){
         stop=true;
     }
 
     /**
      * 结束运行
      */
-    protected void stopped(){
-        stopped=true;
-    }
-
-    /**
-     * 是否已经停止运行
-     * @return
-     */
-    public boolean isStopped() {
-        return stopped;
+    protected boolean stopped(){
+        if(stop){
+            stopped=true;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -67,5 +66,21 @@ public abstract class Process {
     void preRun(){
         stopped=false;
         stop=false;
+    }
+
+    protected boolean P(Semaphore semaphore){
+        semaphore.setValue(semaphore.getValue()-1);
+        if(semaphore.getValue()>=0){
+            return false;
+        }
+        scheduler.block(semaphore);
+        return true;
+    }
+
+    protected void V(Semaphore semaphore){
+        semaphore.setValue(semaphore.getValue()+1);
+        if(semaphore.getValue()<=0){
+            scheduler.wakeup(semaphore);
+        }
     }
 }
