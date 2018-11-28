@@ -14,11 +14,11 @@ public class Process1 extends Process {
     @Override
     public void run() {
         while(CPU.i<6){
-            switch (addr){
+            switch (CPU.address){
                 case 0:
                     System.out.println("process1  calls P on the semaphore 1\n");
                     CPU.address=1;
-                    if(stopped()||P(semaphores[0]))  return;
+                    if(P(semaphores[0]))  return;
                 case 1:System.out.println("process1 is executing in the cretical section 1\n");
                 CPU.address=2;
                     if(stopped()) return;
@@ -46,8 +46,8 @@ public class Process1 extends Process {
                     Main.res2++;
                     System.out.println("s2="+Main.res2+"\n");
                     System.out.println("process1 calls V on semaphore2 and quit cretical section 2.\n");
-//                    if(V(1,'f'))return;
                     CPU.address=6;
+                    V(semaphores[0]);
                     if(stopped()) return;
                 case 6:
                     System.out.println("process1 cycle epoch="+CPU.i+"\n");

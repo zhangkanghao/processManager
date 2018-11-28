@@ -1,5 +1,7 @@
 package cn.zkh.scheduler;
 
+import java.util.TreeMap;
+
 /**
  * 一个进程
  * @author likole
@@ -15,11 +17,13 @@ public abstract class Process {
     /**
      * 停止信号
      */
+    @Deprecated
     protected boolean stop;
 
     /**
      * 已经收到停止信号
      */
+    @Deprecated
     boolean stopped;
 
 
@@ -40,6 +44,7 @@ public abstract class Process {
     /**
      * 停止运行
      */
+    @Deprecated
     void stop(){
         stop=true;
     }
@@ -48,11 +53,12 @@ public abstract class Process {
      * 结束运行
      */
     protected boolean stopped(){
-        if(stop){
-            stopped=true;
-            return true;
-        }
-        return false;
+//        if(stop){
+//            stopped=true;
+//            return true;
+//        }
+//        return false;
+        return scheduler.reSchedule;
     }
 
     /**
@@ -63,9 +69,11 @@ public abstract class Process {
     /**
      * 运行前指定的函数，清空标志
      */
+    @Deprecated
     void preRun(){
-        stopped=false;
-        stop=false;
+//        stopped=false;
+//        stop=false;
+        scheduler.reSchedule=false;
     }
 
     protected boolean P(Semaphore semaphore){

@@ -1,5 +1,6 @@
 package cn.zkh.scheduler;
 
+import java.util.Date;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,7 +17,7 @@ public class Scheduler {
     /**
      * 调度间隔
      */
-    private static final int DELAY_TIME = 5;
+    private static final int DELAY_TIME = 1;
 
     /**
      * the counter to generate next pid
@@ -32,6 +33,10 @@ public class Scheduler {
      * 充当时间中断
      */
     private Timer timer = new Timer();
+
+    long lastScheduleTime=0;
+
+    boolean reSchedule=false;
 
     private TimerTask timerTask = new TimerTask() {
         @Override
@@ -74,9 +79,9 @@ public class Scheduler {
 
     private void downCpu(PCB pcb) {
         //换下cpu
-        pcb.getProcess().stop();
+//        pcb.getProcess().stop();
         //等待程序换下cpu,不懂为啥暂时用不了
-        while (!pcb.getProcess().stopped);
+//        while (!pcb.getProcess().stopped);
         //add to waiting queue;
         pcb.setStatus(Status.READY);
         waitingQueue.add(pcb);
@@ -100,15 +105,21 @@ public class Scheduler {
         Register register = pcb.getRegister();
         CPU.i = register.getAx();
         CPU.address = register.getPc();
-        //准备运行
-        pcb.getProcess().preRun();
         //输出信息
         System.out.println("已将进程" + pcb.getPid() + "换上cpu");
         if (callback != null) {
             callback.upCpu(pcb.getPid());
         }
+        //准备运行
+//        pcb.getProcess().preRun();
+        lastScheduleTime=new Date().getTime();
+        reSchedule=false;
         //运行
-        new Thread(() -> pcb.getProcess().run()).start();
+        //暂时不开线程运行，以避免线程同步问题
+//        new Thread(() -> pcb.getProcess().run()).start();
+        pcb.getProcess().run();
+        //单线程时要在此处再次调度
+        schedule();
     }
 
     private void schedule() {
@@ -116,7 +127,8 @@ public class Scheduler {
         //if there is no available process,return
         if (next == null && running == null) {
             System.out.println("没有进程可以运行了");
-            timer.cancel();
+//            timer.cancel();
+            lastScheduleTime=Long.MAX_VALUE;
             if (callback != null) {
                 callback.finish();
             }
@@ -141,6 +153,8 @@ public class Scheduler {
         running.setStatus(Status.FINISH);
         finishedQueue.add(running);
         running = null;
+//        //单线程
+//         schedule();
         //todo:线程同步有点问题，暂不重新调度
 //        try {
 //            timer.cancel();
@@ -165,6 +179,8 @@ public class Scheduler {
         semaphore.getBlockingQueue().add(running);
         running = null;
         //todo:重新调度
+//        //单线程
+//        schedule();
     }
 
     /**
@@ -185,6 +201,14 @@ public class Scheduler {
     }
 
     public void start() {
-        timer.scheduleAtFixedRate(timerTask, 0, DELAY_TIME);
+        new Thread(() -> {
+            while (true){
+                if (new Date().getTime()-lastScheduleTime>=DELAY_TIME&& !reSchedule){
+                    reSchedule=true;
+                }
+            }
+        }).start();
+        schedule();
+//        timer.scheduleAtFixedRate(timerTask, 0, DELAY_TIME);
     }
 }
