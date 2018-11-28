@@ -1,37 +1,40 @@
 package cn.zkh.scheduler;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedDeque;
+
 /**
- * @author kanghao
- * @date 18-11-25 下午2:01
+ * @author likole
  */
 public class Semaphore {
 
-    //信号量值
+    /**
+     * 信号量的值
+     */
     private int value;
 
-    //等待链指针：该信号量上下一个等待进程的id
-    private int nextwp;
+    /**
+     * 阻塞队列
+     */
+    private Queue<PCB> blockingQueue=new ConcurrentLinkedDeque<>();
 
-    public Semaphore() {
-        value=1;
-
-        //没有wait进程
-        nextwp=-1;
+    public Semaphore(int value) {
+        this.value=value;
     }
 
-    public int getValue() {
+    public Queue<PCB> getBlockingQueue() {
+        return blockingQueue;
+    }
+
+    public void setBlockingQueue(Queue<PCB> blockingQueue) {
+        this.blockingQueue = blockingQueue;
+    }
+
+    int getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    void setValue(int value) {
         this.value = value;
-    }
-
-    public int getNextwp() {
-        return nextwp;
-    }
-
-    public void setNextwp(int nextwp) {
-        this.nextwp = nextwp;
     }
 }

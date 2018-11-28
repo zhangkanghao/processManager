@@ -1,5 +1,7 @@
 package cn.zkh.scheduler;
 
+import java.util.TreeMap;
+
 /**
  * 一个进程
  * @author likole
@@ -15,14 +17,19 @@ public abstract class Process {
     /**
      * 停止信号
      */
+    @Deprecated
     protected boolean stop;
 
     /**
      * 已经收到停止信号
      */
-    private boolean stopped;
+    @Deprecated
+    boolean stopped;
 
 
+    /**
+     * 由调度程序设置
+     */
     void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
@@ -37,23 +44,21 @@ public abstract class Process {
     /**
      * 停止运行
      */
-    protected void stop(){
+    @Deprecated
+    void stop(){
         stop=true;
     }
 
     /**
      * 结束运行
      */
-    protected void stopped(){
-        stopped=true;
-    }
-
-    /**
-     * 是否已经停止运行
-     * @return
-     */
-    public boolean isStopped() {
-        return stopped;
+    protected boolean stopped(){
+//        if(stop){
+//            stopped=true;
+//            return true;
+//        }
+//        return false;
+        return scheduler.reSchedule;
     }
 
     /**
@@ -64,8 +69,26 @@ public abstract class Process {
     /**
      * 运行前指定的函数，清空标志
      */
+    @Deprecated
     void preRun(){
-        stopped=false;
-        stop=false;
+//        stopped=false;
+//        stop=false;
+        scheduler.reSchedule=false;
+    }
+
+    protected boolean P(Semaphore semaphore){
+        semaphore.setValue(semaphore.getValue()-1);
+        if(semaphore.getValue()>=0){
+            return false;
+        }
+        scheduler.block(semaphore);
+        return true;
+    }
+
+    protected void V(Semaphore semaphore){
+        semaphore.setValue(semaphore.getValue()+1);
+        if(semaphore.getValue()<=0){
+            scheduler.wakeup(semaphore);
+        }
     }
 }

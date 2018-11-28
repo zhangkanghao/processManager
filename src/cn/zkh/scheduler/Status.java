@@ -5,5 +5,5 @@ package cn.zkh.scheduler;
  * @date 18-11-25 下午1:51
  */
 public enum Status {
-    EXCUTION,READY,LREADY,WAITING,FINISH
+    EXECUTION,READY,WAITING,FINISH
 }

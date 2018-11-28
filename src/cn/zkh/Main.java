@@ -28,7 +28,7 @@ public class Main {
 
         //设置互斥信号量
         for(int i=0;i<2;i++){
-            semaphores[i]=new Semaphore();
+            semaphores[i]=new Semaphore(1);
         }
     }
 
