@@ -46,6 +46,7 @@ public class Scheduler {
     };
 
     private Queue<PCB> waitingQueue = new ConcurrentLinkedDeque<>();
+    private Queue<PCB> blockingQueue = new ConcurrentLinkedDeque<>();
     private PCB running;
     private Queue<PCB> finishedQueue = new ConcurrentLinkedDeque<>();
 
@@ -167,16 +168,18 @@ public class Scheduler {
     /**
      * 阻塞
      *
-     * @param semaphore 在此信号量上阻塞
      */
-    void block(Semaphore semaphore) {
+    void block(Queue<PCB> queue) {
+        if(queue==null){
+            queue=blockingQueue;
+        }
         System.out.println("进程" + running.getPid() + "被阻塞，进入阻塞队列");
         //保存运行现场
         Register register = running.getRegister();
         register.setAx(CPU.i);
         register.setPc(CPU.address);
         running.setStatus(Status.WAITING);
-        semaphore.getBlockingQueue().add(running);
+        queue.add(running);
         running = null;
         //todo:重新调度
 //        //单线程
@@ -186,10 +189,12 @@ public class Scheduler {
     /**
      * 唤醒
      *
-     * @param semaphore 唤醒此信号量等待队列上的进程
      */
-    void wakeup(Semaphore semaphore) {
-        PCB pcb = semaphore.getBlockingQueue().poll();
+    void wakeup(Queue<PCB> queue) {
+        if(queue==null){
+            queue=blockingQueue;
+        }
+        PCB pcb = queue.poll();
         if (pcb == null) {
             System.out.println("无进程可唤醒");
         } else {

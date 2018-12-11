@@ -26,8 +26,8 @@ public class Process1 extends Process {
                     Main.res1++;
                     System.out.println("s1="+Main.res1+"\n");
                     System.out.println("process1 calls V on semaphore1 and quit cretical section 1.\n");
-//                    if(V(0,'c'))return;
                     CPU.address=3;
+//                    V(semaphores[0]);
                     if(stopped()) return;
                 case 3:
                     for (int i = 0; i <100 ; i++) {
@@ -35,9 +35,9 @@ public class Process1 extends Process {
                         Main.res1--;
                     }
                     System.out.println("process1 calls P on semaphore 2.\n");
-//                    if(P(1,'d'))return;
                     CPU.address=4;
-                    if(stopped()) return;
+//                    if(P(semaphores[1])) return;
+                    if(stopped())return;
                 case 4:
                     System.out.println("process1 is executing cretical section 2.\n");
                     CPU.address=5;
@@ -51,6 +51,8 @@ public class Process1 extends Process {
                     if(stopped()) return;
                 case 6:
                     System.out.println("process1 cycle epoch="+CPU.i+"\n");
+                    CPU.address=0;
+                    if(stopped())return;
             }
             CPU.i++;
         }

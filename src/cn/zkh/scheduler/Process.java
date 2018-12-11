@@ -81,14 +81,14 @@ public abstract class Process {
         if(semaphore.getValue()>=0){
             return false;
         }
-        scheduler.block(semaphore);
+        scheduler.block(semaphore.getBlockingQueue());
         return true;
     }
 
     protected void V(Semaphore semaphore){
         semaphore.setValue(semaphore.getValue()+1);
         if(semaphore.getValue()<=0){
-            scheduler.wakeup(semaphore);
+            scheduler.wakeup(semaphore.getBlockingQueue());
         }
     }
 }
