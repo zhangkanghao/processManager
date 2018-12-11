@@ -3,6 +3,7 @@ package cn.zkh;
 import cn.zkh.scheduler.Semaphore;
 import cn.zkh.scheduler.Scheduler;
 
+
 public class Main {
 
     /**
@@ -59,6 +60,7 @@ public class Main {
         scheduler.addProcess(new Process1());
         scheduler.addProcess(new Process1());
         scheduler.start();
+
     }
 
 
