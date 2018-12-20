@@ -13,6 +13,16 @@ public class Semaphore {
      */
     private int value;
 
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /**
      * 阻塞队列
      */

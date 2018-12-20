@@ -50,7 +50,7 @@ public class Scheduler {
     private PCB running;
     private Queue<PCB> finishedQueue = new ConcurrentLinkedDeque<>();
 
-    void setActionListener(ISchedulerActionListener actionListener) {
+    public void setActionListener(ISchedulerActionListener actionListener) {
         callback = actionListener;
     }
 
@@ -91,7 +91,7 @@ public class Scheduler {
         register.setAx(CPU.i);
         register.setPc(CPU.address);
         //输出信息
-        System.out.println("已将进程" + pcb.getPid() + "换下cpu");
+        //System.out.println("已将进程" + pcb.getPid() + "换下cpu");
         if (callback != null) {
             callback.downCpu(pcb.getPid());
         }
@@ -107,7 +107,7 @@ public class Scheduler {
         CPU.i = register.getAx();
         CPU.address = register.getPc();
         //输出信息
-        System.out.println("已将进程" + pcb.getPid() + "换上cpu");
+        //System.out.println("已将进程" + pcb.getPid() + "换上cpu");
         if (callback != null) {
             callback.upCpu(pcb.getPid());
         }
@@ -127,10 +127,10 @@ public class Scheduler {
         PCB next = nextProcess();
         //if there is no available process,return
         if (next == null && running == null) {
-            System.out.println("没有进程可以运行了");
+            //System.out.println("没有进程可以运行了");
 //            timer.cancel();
             lastScheduleTime=Long.MAX_VALUE;
-            if (callback != null) {
+            if(callback!=null){
                 callback.finish();
             }
         }
@@ -138,10 +138,17 @@ public class Scheduler {
         if (next != null) {
             //put running process into waiting queue
             if (running != null) {
-                System.out.println("目前有进程运行");
+                //System.out.println("目前有进程运行");
                 downCpu(running);
             }
             upCpu(next);
+        }else{
+            if(running!=null){
+                lastScheduleTime=new Date().getTime();
+                reSchedule=false;
+                running.getProcess().run();
+                schedule();
+            }
         }
     }
 
@@ -149,14 +156,16 @@ public class Scheduler {
      * 结束运行当期进程
      */
      void finish() {
-        System.out.println("进程" + running.getPid() + "已经运行完毕,加入结束队列");
+        //System.out.println("进程" + running.getPid() + "已经运行完毕,加入结束队列");
         //移至结束队列
         running.setStatus(Status.FINISH);
         finishedQueue.add(running);
+         if (callback != null) {
+             callback.finishprocess(running.getPid());
+         }
         running = null;
 //        //单线程
-//         schedule();
-        //todo:线程同步有点问题，暂不重新调度
+         schedule();
 //        try {
 //            timer.cancel();
 //        } catch (Exception e) {
@@ -169,11 +178,14 @@ public class Scheduler {
      * 阻塞
      *
      */
-    void block(Queue<PCB> queue) {
+    void block(Queue<PCB> queue,String description) {
         if(queue==null){
             queue=blockingQueue;
         }
         System.out.println("进程" + running.getPid() + "被阻塞，进入阻塞队列");
+        if (callback != null) {
+            callback.block(running.getPid(),description);
+        }
         //保存运行现场
         Register register = running.getRegister();
         register.setAx(CPU.i);
@@ -181,16 +193,15 @@ public class Scheduler {
         running.setStatus(Status.WAITING);
         queue.add(running);
         running = null;
-        //todo:重新调度
 //        //单线程
-//        schedule();
+        schedule();
     }
 
     /**
      * 唤醒
      *
      */
-    void wakeup(Queue<PCB> queue) {
+    void wakeup(Queue<PCB> queue,String description) {
         if(queue==null){
             queue=blockingQueue;
         }
@@ -200,6 +211,9 @@ public class Scheduler {
         } else {
             pcb.setStatus(Status.READY);
             waitingQueue.add(pcb);
+            if (callback != null) {
+                callback.wakeup(pcb.getPid(),description);
+            }
             System.out.println("进程" + pcb.getPid() + "被唤醒");
         }
 

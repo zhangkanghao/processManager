@@ -2,6 +2,9 @@ package cn.zkh.scheduler;
 
 import java.util.TreeMap;
 
+import static cn.zkh.Main.Pprint;
+import static cn.zkh.Main.Vprint;
+
 /**
  * 一个进程
  * @author likole
@@ -77,18 +80,22 @@ public abstract class Process {
     }
 
     protected boolean P(Semaphore semaphore){
+        Pprint(semaphore.getName());
+        System.out.println("==========================P");
         semaphore.setValue(semaphore.getValue()-1);
         if(semaphore.getValue()>=0){
             return false;
         }
-        scheduler.block(semaphore.getBlockingQueue());
+        scheduler.block(semaphore.getBlockingQueue(),semaphore.getName());
         return true;
     }
 
     protected void V(Semaphore semaphore){
+        Vprint(semaphore.getName());
+        System.out.println("=========================V");
         semaphore.setValue(semaphore.getValue()+1);
         if(semaphore.getValue()<=0){
-            scheduler.wakeup(semaphore.getBlockingQueue());
+            scheduler.wakeup(semaphore.getBlockingQueue(),semaphore.getName());
         }
     }
 }
